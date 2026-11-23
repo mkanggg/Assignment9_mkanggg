@@ -1,8 +1,7 @@
 #include <iostream>
-#include <stdexcept>
 
 
-template <typename T = int>   // T stand in for any data type you choose, defaulting to int
+template <typename T = int>   // class template: T in for any data type default is int
 
 
 // Generic Array class
@@ -113,7 +112,8 @@ T genericarray<T>::at(int param) const
 {
     if(param<0 || param >= length)
     {
-        throw std::out_of_range("genericarray::at(): index out of range");
+        std::cout << "at(): index " << param << " is out of range" << std::endl;
+	return T();
     }
 
     return data[param];
@@ -144,7 +144,8 @@ T genericarray<T>::max() const
 {
     if(length==0)   // an empty array has no maximum
     {
-        throw std::out_of_range("genericarray::max(): array is empty");
+        std::cout << "max(): array is empty" << std::endl;
+	return T();
     }
 
     T result = data[0];
@@ -169,7 +170,8 @@ T genericarray<T>::min() const
 {
     if(length==0)  // an empty array has no min
     {
-        throw std::out_of_range("genericarray::min(): array is empty");
+        std::cout << "min(): array is empty" << std::endl;
+	return T();
     }
     
     T result = data[0];
@@ -193,7 +195,7 @@ T *genericarray<T>::slice(int begin, int end) const
 {
     if (begin < 1 || end > length || begin > end)  // begin >= 1, end <= size, and begin must not pass end
     {
-        std::cerr << "GenericArray::slice(): invalid bounds [" << begin << ", "
+        std::cout << "genericarray::slice(): invalid bounds [" << begin << ", "
                   << end << "] for array of size " << length << "\n" << std::endl;
         return nullptr;
     }
@@ -241,17 +243,9 @@ int main()
 
     // test slice with bad bounds, print "invalid bounds"
     int *bad = int_array.slice(5, 100);       // end out of range -> nullptr
-    std::cout << "bad slice returned " << (bad == nullptr ? "nullptr" : "array") << "\n" << std::endl;
+    std::cout << "bad slice returned " << (bad == nullptr ? "nullptr" : "array") << "\n" << std::endl;  // print nullptr if slice failed, "array" if it worked; "\n" adds a blank line
     int *bad2 = int_array.slice(0, 3);        // positions start at 1 -> nullptr
-    std::cout << "slice(0,3) returned " << (bad2 == nullptr ? "nullptr" : "array") << "\n" << std::endl;
-    try   // test at() with a bad index on purpose, catch block handles the error
-    {
-        int_array.at(99);   // only indexes 0 to 11 exist
-    }
-    catch (const std::out_of_range &e)
-    {
-        std::cout << "caught: " << e.what() << "\n" << std::endl;
-    }
+    std::cout << "slice(0,3) returned " << (bad2 == nullptr ? "nullptr" : "array") << "\n" << std::endl;  // print nullptr if slice failed, "array" if it worked; "\n" adds a blank line
 
 
     genericarray<int> ex;
